@@ -2,6 +2,13 @@
 
 This is project developed for Data Scientist training from Udacity
 
+### Dependencies
+
+* sqlalchemy
+* scikitlearn
+* nltk
+* plotly
+
 ### Instructions:
 1. Run the following commands in the project's root directory to set up your database and model.
 
