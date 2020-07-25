@@ -8,6 +8,7 @@ This is project developed for Data Scientist training from Udacity
 * scikitlearn
 * nltk
 * plotly
+* yaml
 
 ### Instructions:
 1. Run the following commands in the project's root directory to set up your database and model.
