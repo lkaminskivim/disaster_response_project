@@ -5,9 +5,11 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from sqlalchemy import create_engine
 from sklearn.metrics import classification_report
+from sklearn.model_selection import GridSearchCV
 
 from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.multioutput import MultiOutputClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 import joblib
@@ -43,16 +45,23 @@ def tokenize(text):
 
 
 def build_model():
-    # build pipeline
-    return Pipeline([
+    parameters = {
+        'clf__estimator__kernel': ["linear", "poly", "sigmoid"],
+        'clf__estimator__probability': [True, False],
+    }
+    pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        ('clf', RandomForestClassifier())
+        ('clf', MultiOutputClassifier(SVC()))
     ])
+
+    model = GridSearchCV(pipeline, parameters)
+    return model
 
 
 def evaluate_model(model, x_test, y_test, category_names):
     y_pred = pd.DataFrame(model.predict(x_test), columns=category_names)
+    print(model.best_params_)
     for col in y_test.columns:
         print(classification_report(y_true=y_test[col].values, y_pred=y_pred[col].values))
 
