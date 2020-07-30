@@ -1,6 +1,6 @@
+import sys
 from sqlalchemy import create_engine
 import pandas as pd
-import yaml
 
 
 def load_data(messages_filepath, categories_filepath):
@@ -27,14 +27,7 @@ def save_data(df, database_filename):
     df.to_sql('MessageTable', engine, index=False)
 
 
-def main():
-    with open("config.yml", "r") as ymlfile:
-        conf = yaml.load(ymlfile, Loader=yaml.SafeLoader)
-
-    messages_filepath = conf["input"]["messages_csv_filepath"]
-    categories_filepath = conf["input"]["categories_csv_filepath"]
-    database_filepath = conf["output"]["database_filepath"]
-
+def prepare_database(messages_filepath, categories_filepath, database_filepath):
     print('Loading data...\n    MESSAGES: {}\n    CATEGORIES: {}'
           .format(messages_filepath, categories_filepath))
     df = load_data(messages_filepath, categories_filepath)
@@ -48,6 +41,20 @@ def main():
     save_data(df, database_filepath)
 
     print('Cleaned data saved to database!')
+
+
+def main():
+    if len(sys.argv) == 4:
+        messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
+        prepare_database(messages_filepath, categories_filepath, database_filepath)
+
+    else:
+        print('Please provide the filepaths of the messages and categories '
+              'datasets as the first and second argument respectively, as '
+              'well as the filepath of the database to save the cleaned data '
+              'to as the third argument. \n\nExample: python process_data.py '
+              'disaster_messages.csv disaster_categories.csv '
+              'DisasterResponse.db')
 
 
 if __name__ == '__main__':

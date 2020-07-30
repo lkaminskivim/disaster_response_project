@@ -1,4 +1,4 @@
-import yaml
+import sys
 import re
 import pandas as pd
 from nltk.tokenize import word_tokenize
@@ -61,12 +61,7 @@ def save_model(model, model_filepath):
     joblib.dump(model, model_filepath)
 
 
-def main():
-    with open("config.yml", "r") as ymlfile:
-        conf = yaml.load(ymlfile, Loader=yaml.SafeLoader)
-
-    database_filepath = conf["output"]["database_filepath"]
-    model_filepath = conf["output"]["model_filepath"]
+def prepare_classifier(database_filepath, model_filepath):
     print('Loading data...\n    DATABASE: {}'.format(database_filepath))
     x, y, category_names = load_data(database_filepath)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
@@ -84,6 +79,18 @@ def main():
     save_model(model, model_filepath)
 
     print('Trained model saved!')
+
+
+def main():
+    if len(sys.argv) == 3:
+        database_filepath, model_filepath = sys.argv[1:]
+        prepare_classifier(database_filepath, model_filepath)
+
+    else:
+        print('Please provide the filepath of the disaster messages database '
+              'as the first argument and the filepath of the pickle file to '
+              'save the model to as the second argument. \n\nExample: python '
+              'train_classifier.py ../data/DisasterResponse.db classifier.pkl')
 
 
 if __name__ == '__main__':
