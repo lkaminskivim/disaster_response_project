@@ -13,13 +13,16 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from sqlalchemy import create_engine
 from sklearn.metrics import classification_report
+from sklearn.model_selection import GridSearchCV
 
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.multioutput import MultiOutputClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 import joblib
 import nltk
+
 nltk.download(['punkt', 'wordnet'])
 
 
@@ -51,12 +54,14 @@ def tokenize(text):
 
 
 def build_model():
-    # build pipeline
-    return Pipeline([
+    pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        ('clf', RandomForestClassifier())
+        ('clf', MultiOutputClassifier(
+            RandomForestClassifier(bootstrap=False, criterion="gini")
+        ))
     ])
+    return pipeline
 
 
 def evaluate_model(model, x_test, y_test, category_names):
