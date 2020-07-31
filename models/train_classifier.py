@@ -1,3 +1,11 @@
+"""
+This script builds and trains model for classification of messages.
+
+Parameters
+----------
+* path to database with processed data of messages and categories
+* path to location where trained model should be saved.
+"""
 import sys
 import re
 import pandas as pd

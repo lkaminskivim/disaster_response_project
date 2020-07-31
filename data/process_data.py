@@ -1,3 +1,13 @@
+"""
+This script is for processing data of messages and categories. Data are obtained from csv files, combined, cleaned and
+saved to database.
+
+Parameters
+----------
+* path to csv file with messages
+* path to csv file with categories
+* path to location where database with processed data should be created
+"""
 import sys
 from sqlalchemy import create_engine
 import pandas as pd

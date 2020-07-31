@@ -1,3 +1,13 @@
+"""
+This script runs flask application which categorises messages via model trained on csv files containing messages
+and categories.
+
+Parameters
+----------
+* path to database with messages and categories. See data/process_data.py
+* path to file with model which was created with models/train_classifier.py
+"""
+import sys
 import json
 import plotly
 import pandas as pd
@@ -24,14 +34,6 @@ def tokenize(text):
         clean_tokens.append(clean_tok)
 
     return clean_tokens
-
-
-# load data
-engine = create_engine('sqlite:///../data/Messages.db')
-df = pd.read_sql_table('MessageTable', engine)
-
-# load model
-model = joblib.load("../models/disaster_model.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -92,8 +94,22 @@ def go():
     )
 
 
-def main():
+def start_application(database_filepath, model_filepath):
+    # load data
+    engine = create_engine('sqlite:///{0}'.format(database_filepath))
+    global df
+    df = pd.read_sql_table('MessageTable', engine)
+
+    # load model
+    global model
+    model = joblib.load(model_filepath)
+
     app.run(host='0.0.0.0', port=3001, debug=True)
+
+
+def main():
+    database_filepath, model_filepath = sys.argv[1:]
+    start_application(database_filepath, model_filepath)
 
 
 if __name__ == '__main__':
